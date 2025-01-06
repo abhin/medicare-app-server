@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { USER_ROLE_CUSTOMER, USER_ROLE_VENDOR } from "./userRoles.js";
+import { USER_ROLE_ADMIN, USER_ROLE_PATIENT, USER_ROLE_DOCTOR } from "./userRoles.js";
 
 const usersSchema = new mongoose.Schema(
   {
@@ -15,7 +15,7 @@ const usersSchema = new mongoose.Schema(
     roleId: {
       type: Number,
       required: false,
-      enum: [USER_ROLE_CUSTOMER.id, USER_ROLE_VENDOR.id],
+      enum: [USER_ROLE_ADMIN.id, USER_ROLE_PATIENT.id, USER_ROLE_DOCTOR.id],
       index: true,
     },
     status: { type: Boolean, default: false, index: true },

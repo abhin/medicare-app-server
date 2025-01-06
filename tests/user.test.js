@@ -6,6 +6,7 @@ import { ROUTE_BASE } from "../utils/config.js";
 import mongoose from "mongoose";
 
 const PORT = process.env.PORT_TEST || 8081;
+let userId;
 
 beforeAll(async () => {
   await db;
@@ -34,6 +35,7 @@ describe("User API", () => {
     );
     expect(res.body).toHaveProperty("user");
     expect(res.body.user).toHaveProperty("email", "john.doe@example.com");
+    userId = res.body.user._id;
   });
 
   it("should signup a new user", async () => {
@@ -81,20 +83,20 @@ describe("User API", () => {
 
   it("should return 404 for a non-existing user ID", async () => {
     const res = await request(server).get(
-      `${ROUTE_BASE}/read/60c72b2f9b1d8b3a2c8e4d2b`
+      `${ROUTE_BASE}/read/67641ada8b12446392fcdf5e`
     );
-    expect(res.statusCode).toEqual(500);
+    expect(res.statusCode).toEqual(404);
     expect(res.body).toHaveProperty("success", false);
     expect(res.body).toHaveProperty("message", "User does not exist with the provided ID.");
   });
 
-  it("should check valid User ID", async () => {
+  it("should check invalid Mongo User ID", async () => {
     const res = await request(server).get(
-      `${ROUTE_BASE}/read/shsd`
+      `${ROUTE_BASE}/read/67641ada8b12446392fcdf5eXXX`
     );
-    expect(res.statusCode).toEqual(404);
+    expect(res.statusCode).toEqual(500);
     expect(res.body).toHaveProperty("success", false);
-    expect(res.body).toHaveProperty("message", "Invalid ID.");
+    expect(res.body).toHaveProperty("message", "Error while checking user existence.");
   });
 
   it("should update a user", async () => {

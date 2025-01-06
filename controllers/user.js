@@ -81,7 +81,7 @@ async function getUser(req, res) {
 
 async function update(req, res) {
   const { name, email, password, status } = req.body;
-  const id = req?.authUsers?.uId;
+  const id = req._id;
 
   try {
     if (!id) throw new Error("Users ID not found.");

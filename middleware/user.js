@@ -43,44 +43,6 @@ export const checkUsersExistence = async (req, res, next) => {
   }
 };
 
-export const validateToken = async (req, res, next) => {
-  const { token } = req.params;
-
-  try {
-    if (!token) {
-      return res.status(401).json({ success: false, message: "Token is missing." });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
-
-    req._id = decoded?.uId;
-
-    if (!req._id) {
-      return res.status(401).json({ success: false, message: "Invalid token payload." });
-    }
-
-    next();
-  } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      return res.status(401).json({
-        success: false,
-        message: "Token has expired. Please request a new one.",
-      });
-    }
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid token. Authentication failed.",
-      });
-    }
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while validating the token.",
-      error: error.message,
-    });
-  }
-};
-
 export const validateCreate = () => [
   requiredFieldValidation("name", 3),
   requiredFieldValidation("email")
