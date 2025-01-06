@@ -17,6 +17,7 @@ const usersSchema = new mongoose.Schema(
       required: false,
       enum: [USER_ROLE_ADMIN.id, USER_ROLE_PATIENT.id, USER_ROLE_DOCTOR.id],
       index: true,
+      default: USER_ROLE_PATIENT.id
     },
     status: { type: Boolean, default: false, index: true },
   },

@@ -54,7 +54,7 @@ export function sendAccountActivationEmail(users, subject, text) {
             Please click on the bewlo link to activate your account. 
             Link: ${
               process.env.SERVER_HOST_URL
-            }/api/v1/users/activate/${generateAccessToken(_id)}  
+            }/api/v1/users/activate/${generateAccessToken({_id})}  
         `,
   });
 }

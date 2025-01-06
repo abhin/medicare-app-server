@@ -4,6 +4,7 @@ import db from "../db.js";
 import Users from "../models/users.js";
 import { ROUTE_BASE } from "../utils/config.js";
 import mongoose from "mongoose";
+import { generateAccessToken } from "../utils/accessToken.js";
 
 const PORT = process.env.PORT_TEST || 8081;
 let userId;
@@ -11,7 +12,9 @@ let userId;
 beforeAll(async () => {
   await db;
   server.listen(PORT, () => {
-    console.log(`DB connection is success. Server is listening on port: ${PORT}`);
+    console.log(
+      `DB connection is success. Server is listening on port: ${PORT}`
+    );
   });
 });
 
@@ -87,7 +90,10 @@ describe("User API", () => {
     );
     expect(res.statusCode).toEqual(404);
     expect(res.body).toHaveProperty("success", false);
-    expect(res.body).toHaveProperty("message", "User does not exist with the provided ID.");
+    expect(res.body).toHaveProperty(
+      "message",
+      "User does not exist with the provided ID."
+    );
   });
 
   it("should check invalid Mongo User ID", async () => {
@@ -96,7 +102,10 @@ describe("User API", () => {
     );
     expect(res.statusCode).toEqual(500);
     expect(res.body).toHaveProperty("success", false);
-    expect(res.body).toHaveProperty("message", "Error while checking user existence.");
+    expect(res.body).toHaveProperty(
+      "message",
+      "Error while checking user existence."
+    );
   });
 
   it("should update a user", async () => {
@@ -105,11 +114,17 @@ describe("User API", () => {
       email: "bob@example.com",
       password: "password123",
     });
-    const res = await request(server).put(`${ROUTE_BASE}/update`).send({
-      name: "Bob Updated",
-      email: "bob.updated@example.com",
-      status: true,
-    });
+
+    const token = generateAccessToken({ _id: user._id });
+
+    const res = await request(server)
+      .put(`${ROUTE_BASE}/update`)
+      .set("authorization", token)
+      .send({
+        name: "Bob Updated",
+        email: "bob.updated@example.com",
+        status: true,
+      });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty("success", true);
     expect(res.body).toHaveProperty("message", "Users updated successfully.");
@@ -123,7 +138,11 @@ describe("User API", () => {
       email: "charlie@example.com",
       password: "password123",
     });
-    const res = await request(server).delete(`${ROUTE_BASE}/delete/${user._id}`);
+
+    const token = generateAccessToken({ _id: userId });
+    const res = await request(server)
+      .delete(`${ROUTE_BASE}/delete/${user._id}`)
+      .set("authorization", token);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty("success", true);
     expect(res.body).toHaveProperty(
@@ -139,12 +158,36 @@ describe("User API", () => {
       password: "password123",
       status: false,
     });
-    const res = await request(server).get(`${ROUTE_BASE}/activate/${user._id}`);
+    console.log("user._id", user._id);
+    const token = generateAccessToken({ _id: user._id });
+    const res = await request(server).get(`${ROUTE_BASE}/activate/${token}`);
+    console.log(res.body);
+
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty("success", true);
     expect(res.body).toHaveProperty(
       "message",
       "Account activated successfully."
+    );
+  });
+
+  it("Try activate a user who is already active", async () => {
+    const user = await Users.create({
+      name: "Ghih",
+      email: "sfd@example.com",
+      password: "password123",
+      status: true,
+    });
+    console.log("user._id", user._id);
+    const token = generateAccessToken({ _id: user._id });
+    const res = await request(server).get(`${ROUTE_BASE}/activate/${token}`);
+    console.log(res.body);
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toHaveProperty("success", false);
+    expect(res.body).toHaveProperty(
+      "message",
+      "Account is already activated."
     );
   });
 });

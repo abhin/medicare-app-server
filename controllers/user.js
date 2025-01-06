@@ -142,9 +142,10 @@ async function deleteUser(req, res) {
 }
 
 async function activate(req, res) {
-  const { _id } = req.params;
+  const { _id } = req;
 
   try {
+    console.log("activate::req._id", req._id);
     if (!_id) throw new Error("Users ID not found.");
 
     const updatedUsers = await Users.findByIdAndUpdate(

@@ -1,5 +1,6 @@
 import { body } from "express-validator";
 import Users from "../models/users.js";
+import { verifyUser } from "./auth.js";
 import {
   requiredFieldValidation,
   requiredParamValidation,
@@ -55,6 +56,7 @@ export const validateCreate = () => [
 ];
 
 export const validateUpdate = (id) => [
+  verifyUser,
   requiredFieldValidation("name", 3),
   requiredFieldValidation("email")
     .isEmail()
@@ -79,6 +81,7 @@ export const validateUpdate = (id) => [
 ];
 
 export const validateDelete = () => [
+  verifyUser,
   requiredParamValidation("_id").isMongoId().withMessage("Invalid ID."),
   checkUsersExistence,
   getValidationResult,
@@ -86,9 +89,10 @@ export const validateDelete = () => [
 
 export const validateActivation = () => [
   requiredParamValidation("token"),
-  validateToken,
+  verifyUser,
   async (req, res, next) => {
     try {
+      console.log("validateActivation::req._id", req._id);
       const user = await Users.findById(req._id);
 
       if (!user) {
