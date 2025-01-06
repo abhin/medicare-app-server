@@ -1,0 +1,14 @@
+{
+  "name": "medicare-app",
+  "version": "1.0.0",
+  "description": "Medical consultation Online",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "abhin",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
