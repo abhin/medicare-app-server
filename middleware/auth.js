@@ -1,6 +1,6 @@
 // import { Strategy } from "passport-google-oauth20";
 
-import { verifyAccessToken } from "../utils/accessToken";
+import { verifyAccessToken } from "../utils/accessToken.js";
 
 export const verifyUser = (req, res, next) => {
   const token = req.headers.authorization || req.params.token;

@@ -8,7 +8,7 @@ import userRouter from "./routers/user.js";
 dotenv.config();
 const server = express();
 server.use(bodyParser.json());
-server.use(cors());
+server.use(cors({ orgin: process.env.CLIENT_HOST_URL }));
 server.use(`${ROUTE_BASE}/user`, userRouter);
 
 server.get([`${ROUTE_BASE}/healthcheck`, `${ROUTE_BASE}/check`], (req, res) => {
