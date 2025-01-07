@@ -9,7 +9,7 @@ dotenv.config();
 const server = express();
 server.use(bodyParser.json());
 server.use(cors());
-server.use(ROUTE_BASE, userRouter);
+server.use(`${ROUTE_BASE}/user`, userRouter);
 
 server.get([`${ROUTE_BASE}/healthcheck`, `${ROUTE_BASE}/check`], (req, res) => {
   res.status(200).json({
