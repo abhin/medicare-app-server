@@ -8,6 +8,7 @@ import { generateAccessToken } from "../utils/accessToken.js";
 
 const PORT = process.env.PORT_TEST || 8081;
 let userId;
+const apiPath = `${ROUTE_BASE}/user`;
 
 beforeAll(async () => {
   await db;
@@ -25,7 +26,7 @@ afterAll(async () => {
 
 describe("User API", () => {
   it("should create a new user", async () => {
-    const res = await request(server).post(`${ROUTE_BASE}/create`).send({
+    const res = await request(server).post(`${apiPath}/create`).send({
       name: "John Doe",
       email: "john.doe@example.com",
       password: "password123",
@@ -42,7 +43,7 @@ describe("User API", () => {
   });
 
   it("should signup a new user", async () => {
-    const res = await request(server).post(`${ROUTE_BASE}/signup`).send({
+    const res = await request(server).post(`${apiPath}/signup`).send({
       name: "John Doe",
       email: "john.doe1@example.com",
       password: "password123",
@@ -58,7 +59,7 @@ describe("User API", () => {
   });
 
   it("should not create a user with an existing email", async () => {
-    const res = await request(server).post(`${ROUTE_BASE}/create`).send({
+    const res = await request(server).post(`${apiPath}/create`).send({
       name: "Jane Doe",
       email: "john.doe@example.com",
       password: "password123",
@@ -77,7 +78,7 @@ describe("User API", () => {
       email: "alice@example.com",
       password: "password123",
     });
-    const res = await request(server).get(`${ROUTE_BASE}/read/${user._id}`);
+    const res = await request(server).get(`${apiPath}/read/${user._id}`);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty("success", true);
     expect(res.body).toHaveProperty("user");
@@ -86,7 +87,7 @@ describe("User API", () => {
 
   it("should return 404 for a non-existing user ID", async () => {
     const res = await request(server).get(
-      `${ROUTE_BASE}/read/67641ada8b12446392fcdf5e`
+      `${apiPath}/read/67641ada8b12446392fcdf5e`
     );
     expect(res.statusCode).toEqual(404);
     expect(res.body).toHaveProperty("success", false);
@@ -98,7 +99,7 @@ describe("User API", () => {
 
   it("should check invalid Mongo User ID", async () => {
     const res = await request(server).get(
-      `${ROUTE_BASE}/read/67641ada8b12446392fcdf5eXXX`
+      `${apiPath}/read/67641ada8b12446392fcdf5eXXX`
     );
     expect(res.statusCode).toEqual(500);
     expect(res.body).toHaveProperty("success", false);
@@ -118,7 +119,7 @@ describe("User API", () => {
     const token = generateAccessToken({ _id: user._id });
 
     const res = await request(server)
-      .put(`${ROUTE_BASE}/update`)
+      .put(`${apiPath}/update`)
       .set("authorization", token)
       .send({
         name: "Bob Updated",
@@ -141,7 +142,7 @@ describe("User API", () => {
 
     const token = generateAccessToken({ _id: userId });
     const res = await request(server)
-      .delete(`${ROUTE_BASE}/delete/${user._id}`)
+      .delete(`${apiPath}/delete/${user._id}`)
       .set("authorization", token);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty("success", true);
@@ -160,7 +161,7 @@ describe("User API", () => {
     });
     console.log("user._id", user._id);
     const token = generateAccessToken({ _id: user._id });
-    const res = await request(server).get(`${ROUTE_BASE}/activate/${token}`);
+    const res = await request(server).get(`${apiPath}/activate/${token}`);
     console.log(res.body);
 
     expect(res.statusCode).toEqual(200);
@@ -180,7 +181,7 @@ describe("User API", () => {
     });
     console.log("user._id", user._id);
     const token = generateAccessToken({ _id: user._id });
-    const res = await request(server).get(`${ROUTE_BASE}/activate/${token}`);
+    const res = await request(server).get(`${apiPath}/activate/${token}`);
     console.log(res.body);
 
     expect(res.statusCode).toEqual(400);

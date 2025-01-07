@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-import { USER_ROLE_ADMIN, USER_ROLE_PATIENT, USER_ROLE_DOCTOR } from "./userRoles.js";
+import {
+  USER_ROLE_ADMIN,
+  USER_ROLE_PATIENT,
+  USER_ROLE_DOCTOR,
+} from "./userRoles.js";
+import { FEMALE, MALE, OTHERS } from "./gender.js";
 
 const usersSchema = new mongoose.Schema(
   {
@@ -12,12 +17,18 @@ const usersSchema = new mongoose.Schema(
       index: true,
     },
     password: { type: String, required: false },
-    roleId: {
+    role: {
       type: Number,
       required: false,
       enum: [USER_ROLE_ADMIN.id, USER_ROLE_PATIENT.id, USER_ROLE_DOCTOR.id],
       index: true,
-      default: USER_ROLE_PATIENT.id
+      default: USER_ROLE_PATIENT.id,
+    },
+    gender: {
+      type: Number,
+      required: false,
+      enum: [FEMALE.id, MALE.id, OTHERS.id],
+      index: true,
     },
     status: { type: Boolean, default: false, index: true },
   },

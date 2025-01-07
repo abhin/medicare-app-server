@@ -3,7 +3,7 @@ import Users from "../models/users.js";
 import { sendAccountActivationEmail } from "../utils/email.js";
 
 async function create(req, res) {
-  const { name, email, password, status, sendEmail } = req.body;
+  const { name, email, password, status, role, sendEmail } = req.body;
   try {
     const passwordHash = await bcrypt.hash(
       password,
@@ -14,7 +14,9 @@ async function create(req, res) {
       name,
       email,
       password: passwordHash,
+      role,
       status,
+      gender,
     });
 
     if (sendEmail && !(await sendAccountActivationEmail(user))) {
@@ -80,7 +82,7 @@ async function getUser(req, res) {
 }
 
 async function update(req, res) {
-  const { name, email, password, status } = req.body;
+  const { name, email, password, role, gender, status } = req.body;
   const id = req._id;
 
   try {
