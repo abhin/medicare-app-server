@@ -3,7 +3,7 @@ import Users from "../models/users.js";
 import { sendAccountActivationEmail } from "../utils/email.js";
 
 async function create(req, res) {
-  const { name, email, password, status, role, sendEmail } = req.body;
+  const { name, email, password, status, role, gender, sendEmail } = req.body;
   try {
     const passwordHash = await bcrypt.hash(
       password,
@@ -32,9 +32,10 @@ async function create(req, res) {
       user,
     });
   } catch (error) {
-    return res.status( 409 ).json({
+    res.status(400).json({
       success: false,
-      message: "User already exists with this email.",
+      message: "Error during user creation.",
+      error: error.message,
     });
   }
 }
