@@ -96,7 +96,7 @@ async function getUser(req, res) {
 
 async function update(req, res) {
   const { name, email, password, role, gender, status } = req.body;
-  const id = req._id;
+  const id = req.accessKeyValue;
 
   try {
     if (!id) throw new Error("Users ID not found.");
@@ -160,10 +160,9 @@ async function deleteUser(req, res) {
 }
 
 async function activate(req, res) {
-  const { _id } = req;
+  const _id = req.accessKeyValue;
 
   try {
-    console.log("activate::req._id", req._id);
     if (!_id) throw new Error("Users ID not found.");
 
     const updatedUsers = await Users.findByIdAndUpdate(

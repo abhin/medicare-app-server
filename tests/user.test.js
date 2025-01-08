@@ -116,7 +116,7 @@ describe("User API", () => {
       password: "password123",
     });
 
-    const token = generateAccessToken({ _id: user._id });
+    const token = generateAccessToken({accessKey: user._id });
 
     const res = await request(server)
       .put(`${apiPath}/update`)
@@ -140,7 +140,7 @@ describe("User API", () => {
       password: "password123",
     });
 
-    const token = generateAccessToken({ _id: userId });
+    const token = generateAccessToken({accessKey: userId });
     const res = await request(server)
       .delete(`${apiPath}/delete/${user._id}`)
       .set("authorization", token);
@@ -160,7 +160,7 @@ describe("User API", () => {
       status: false,
     });
     console.log("user._id", user._id);
-    const token = generateAccessToken({ _id: user._id });
+    const token = generateAccessToken({accessKey: user._id });
     const res = await request(server).get(`${apiPath}/activate/${token}`);
     console.log(res.body);
 
@@ -180,7 +180,7 @@ describe("User API", () => {
       status: true,
     });
     console.log("user._id", user._id);
-    const token = generateAccessToken({ _id: user._id });
+    const token = generateAccessToken({accessKey: user._id });
     const res = await request(server).get(`${apiPath}/activate/${token}`);
     console.log(res.body);
 

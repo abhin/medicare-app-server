@@ -92,8 +92,7 @@ export const validateActivation = () => [
   verifyUser,
   async (req, res, next) => {
     try {
-      console.log("validateActivation::req._id", req._id);
-      const user = await Users.findById(req._id);
+      const user = await Users.findById(req.accessKeyValue);
 
       if (!user) {
         return res.status(404).json({

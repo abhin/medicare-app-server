@@ -35,7 +35,7 @@ async function login(req, res) {
     }
 
     const userResponse = {
-      token: generateAccessToken(user._id),
+      token: generateAccessToken({accessKey: user._id}),
       name: user.name,
       email: user.email,
       profilePic:
@@ -83,7 +83,7 @@ async function googleLoginCallBack(req, res) {
     }
 
     res.redirect(
-      `${process.env.CLIENT_HOST_URL}/${generateAccessToken(email, "1d")}`
+      `${process.env.CLIENT_HOST_URL}/${generateAccessToken({accessKey: email}, "1d")}`
     );
   } catch (error) {
     res.status(200).json({
@@ -102,7 +102,7 @@ function googleUserVerify(req, res) {
         success: true,
         message: "Google user verification success",
         user: {
-          token: generateAccessToken(data._id),
+          token: generateAccessToken({accessKey:data._id}),
           name: data.name,
           email: data.email,
           profilePic: data.profilePic,

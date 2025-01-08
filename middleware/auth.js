@@ -14,7 +14,7 @@ export const verifyUser = (req, res, next) => {
       return res.status(statusCode).json({ success, message });
     }
 
-    req._id = decoded?._id;
+    req.accessKeyValue = decoded?.accessKey;
 
     next();
   } catch (error) {
