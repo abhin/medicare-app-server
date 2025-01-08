@@ -1,13 +1,14 @@
 // import { Strategy } from "passport-google-oauth20";
 
 import { verifyAccessToken } from "../utils/accessToken.js";
+import { getValidationResult, requiredFieldValidation } from "../utils/validator.js";
 
 export const verifyUser = (req, res, next) => {
   const token = req.headers.authorization || req.params.token;
 
   try {
     const result = verifyAccessToken(token);
-    const { success, message, statusCode, decoded } = result;    
+    const { success, message, statusCode, decoded } = result;
 
     if (!success) {
       return res.status(statusCode).json({ success, message });
@@ -41,3 +42,9 @@ export const googleStrategy = () => {
     }
   );
 };
+
+export const validateLogin = () => [
+  requiredFieldValidation("email").isEmail().withMessage("Invalid Credentials"),
+  requiredFieldValidation("password"),
+  getValidationResult,
+];

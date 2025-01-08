@@ -31,7 +31,7 @@ async function create(req, res) {
     delete user.password;
     userId = user._id;
 
-    if (sendEmail && !(await sendAccou ntActivationEmail(user))) {
+    if (sendEmail && !(await sendAccountActivationEmail(user))) {
       throw new Error(
         "Failed to send activation email. Please contact support."
       );

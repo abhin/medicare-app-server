@@ -30,11 +30,14 @@ const usersSchema = new mongoose.Schema(
       enum: [FEMALE.id, MALE.id, OTHERS.id],
       index: true,
     },
-    status: { 
-      type: Boolean, 
-      default: false, 
+    profilePic: {
+      type: String,
+    },
+    status: {
+      type: Boolean,
+      default: false,
       enum: [true, false],
-      index: true 
+      index: true,
     },
   },
   { timestamps: true }

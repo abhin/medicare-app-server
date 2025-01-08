@@ -9,14 +9,16 @@ export const requiredFieldValidation = (field, minLength = 0) => {
     .bail()
     .notEmpty()
     .withMessage(`${capitalizeField(field)} should not be empty`)
-    .trim()
-    .bail();
+    .trim();
 
   if (minLength > 0) {
-    validateBody = validateBody
+    validateBody
+      .bail()
       .isLength({ min: minLength })
       .withMessage(
-        `${capitalizeField(field)} should be at least ${minLength} characters long`
+        `${capitalizeField(
+          field
+        )} should be at least ${minLength} characters long`
       );
   }
 

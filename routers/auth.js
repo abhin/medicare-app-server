@@ -1,21 +1,13 @@
 import { login, googleLoginCallBack, googleUserVerify } from "../controllers/auth.js";
 import express from "express";
-import { getValidationResult } from "../middlewares/validator.js";
-import { body } from "express-validator";
 import passport from "passport";
-import { isLoggedIn } from "../middlewares/auth.js";
+import { validateLogin, verifyUser } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.post(
   "/login",
-  body("email").exists().trim().isEmail().withMessage("Invalid Credentials"),
-  body("password")
-    .exists()
-    .trim()
-    .notEmpty()
-    .withMessage("Invalid Credentials"),
-  getValidationResult,
+  validateLogin(),
   login
 );
 
@@ -33,6 +25,6 @@ router.get(
   googleLoginCallBack
 );
 
-router.post("/google/verify", isLoggedIn, googleUserVerify);
+router.post("/google/verify", verifyUser, googleUserVerify);
 
 export default router;

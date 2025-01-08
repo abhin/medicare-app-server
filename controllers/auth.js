@@ -1,46 +1,60 @@
 import bcrypt from "bcrypt";
 import isUrl from "is-url";
-import User from "../modals/user.js";
-import {
-  generateAccessToken,
-  sendAccountActivationEmail,
-  getProfilePicUrl,
-} from "../utilities/function.js";
+import User from "../models/users.js";
+import { sendAccountActivationEmail } from "../utils/email.js";
+import { generateAccessToken } from "../utils/accessToken.js";
+import { generateFullServerUrl } from "../utils/url.js";
 
 async function login(req, res) {
   const { email, password } = req.body;
+
   try {
-    if (!email || !password) {
-      throw new Error("Invalid login.");
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid login credentials.",
+      });
     }
 
-    const user = await User.findOne({ email });
-    const match = user && (await bcrypt.compare(password, user?.password));
+    const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      throw new Error("Invalid login credentials.");
+      return res.status(401).json({
+        success: false,
+        message: "Invalid login credentials.",
+      });
     }
 
-    if (!user?.active) {
-      throw new Error("Account is inactive.");
+    if (!user.status) {
+      return res.status(403).json({
+        success: false,
+        message: "Account is inactive.",
+      });
     }
+
+    const userResponse = {
+      token: generateAccessToken(user._id),
+      name: user.name,
+      email: user.email,
+      profilePic:
+        user.profilePic &&
+        (isUrl(user.profilePic)
+          ? user.profilePic
+          : generateFullServerUrl(req, user.profilePic)),
+    };
 
     res.status(200).json({
       success: true,
       message: "Login success",
-      user: {
-        token: generateAccessToken(user._id),
-        name: user.name,
-        email: user.email,
-        profilePic:
-        user?.profilePic && ((isUrl(user.profilePic) && user.profilePic) ||
-          getProfilePicUrl(req, user.profilePic)),
-      },
+      user: userResponse,
     });
   } catch (error) {
-    res.status(200).json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: "An error occurred during login.",
+      error: error.message,
     });
   }
 }
@@ -57,12 +71,12 @@ async function googleLoginCallBack(req, res) {
         name,
         email,
         profilePic: picture,
-        active: email_verified,
+        status: email_verified,
       },
       { new: true, upsert: true, sort: { createdAt: -1 } }
     );
 
-    if (!user.active && !(await sendAccountActivationEmail(user))) {
+    if (!user.status && !(await sendAccountActivationEmail(user))) {
       throw new Error(
         "Failed to send activation email. Please contact support."
       );
