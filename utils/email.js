@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import { generateAccessToken } from "./accessToken.js";
+import {APP_NAME} from './config.js'
 
 import {
   EMAIL_SERVICE,
@@ -16,16 +18,17 @@ export async function sendEmail({
   from = process.env.FROM_EMAIL,
 }) {
   try {
+   
     const transporter = nodemailer.createTransport({
-      service: EMAIL_SERVICE,
-      host: EMAIL_HOST,
-      port: EMAIL_PORT,
-      secure: true,
+      service: "gmail",
       auth: {
-        users: process.env.FROM_EMAIL,
-        pass: process.env.GMAIL_PASS,
+        user: process.env.FROM_EMAIL,
+        pass: process.env.GMAIL_APP_PASSWORD,
       },
+      logger: true,
+      debug: true,
     });
+    
 
     const info = await transporter.sendMail({
       from: `${name} <${from}>`,
@@ -43,9 +46,10 @@ export async function sendEmail({
 
 export function sendAccountActivationEmail(users, subject, text) {
   const { email, name, _id } = users;
+
   return sendEmail({
     to: email,
-    subject: subject || "Your ToDo Account Activation",
+    subject: subject || `Your ${APP_NAME} Account Activation`,
     text:
       text ||
       `
@@ -54,7 +58,7 @@ export function sendAccountActivationEmail(users, subject, text) {
             Please click on the bewlo link to activate your account. 
             Link: ${
               process.env.SERVER_HOST_URL
-            }/api/v1/users/activate/${generateAccessToken({_id})}  
+            }/api/v1/user/activate/${generateAccessToken({ _id })}  
         `,
   });
 }

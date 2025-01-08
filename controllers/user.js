@@ -4,13 +4,19 @@ import { sendAccountActivationEmail } from "../utils/email.js";
 
 async function create(req, res) {
   const { name, email, password, status, role, gender, sendEmail } = req.body;
+  const succMsg = sendEmail
+    ? "Account created successfully. Please check your email for activation."
+    : "Account created successfully.";
+
+  let userId;
+
   try {
     const passwordHash = await bcrypt.hash(
       password,
       parseInt(process.env.SALT_ROUNDS)
     );
 
-    const user = await Users.create({
+    const newUser = new Users({
       name,
       email,
       password: passwordHash,
@@ -19,19 +25,25 @@ async function create(req, res) {
       gender,
     });
 
-    if (sendEmail && !(await sendAccountActivationEmail(user))) {
+    await newUser.save();
+
+    const user = newUser.toObject();
+    delete user.password;
+    userId = user._id;
+
+    if (sendEmail && !(await sendAccou ntActivationEmail(user))) {
       throw new Error(
         "Failed to send activation email. Please contact support."
       );
     }
 
-    return res.status( 201 ).json({
+    return res.status(201).json({
       success: true,
-      message:
-        "Account created successfully. Please check your email for activation.",
+      message: succMsg,
       user,
     });
   } catch (error) {
+    await Users.findByIdAndDelete({ _id: userId });
     res.status(400).json({
       success: false,
       message: "Error during user creation.",
@@ -43,12 +55,12 @@ async function create(req, res) {
 async function getAllUsers(req, res) {
   try {
     const users = await Users.find().select("-password");
-    res.status( 200 ).json({
+    res.status(200).json({
       success: true,
       users,
     });
   } catch (error) {
-    res.status( 500 ).json({
+    res.status(500).json({
       success: false,
       message: "Error occurred while fetching users.",
       error: error.message,
@@ -102,10 +114,13 @@ async function update(req, res) {
       new: true,
     });
 
-    res.status( 200 ).json({
+    const user = updatedUsers.toObject();
+    delete user.password;
+
+    res.status(200).json({
       success: true,
       message: "Users updated successfully.",
-      user: updatedUsers,
+      user,
     });
   } catch (error) {
     res.status(400).json({
@@ -123,7 +138,7 @@ async function deleteUser(req, res) {
     const existingUsers = await Users.exists({ _id });
 
     if (!existingUsers) {
-      return res.status( 404 ).json({
+      return res.status(404).json({
         success: false,
         message: "Users does not exist.",
       });
@@ -131,7 +146,7 @@ async function deleteUser(req, res) {
 
     await Users.findByIdAndDelete(_id);
 
-    res.status( 200 ).json({
+    res.status(200).json({
       success: true,
       message: `Users deleted successfully. ID: ${_id}`,
     });
@@ -161,7 +176,7 @@ async function activate(req, res) {
       throw new Error("Activation failed. Invalid URL.");
     }
 
-    res.status( 200 ).json({
+    res.status(200).json({
       success: true,
       message: "Account activated successfully.",
     });
