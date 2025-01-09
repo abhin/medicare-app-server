@@ -101,7 +101,7 @@ async function update(req, res) {
   try {
     if (!id) throw new Error("Users ID not found.");
 
-    const updatedFields = { name, email, status };
+    const updatedFields = { name, email, role, gender, status };
 
     if (password) {
       updatedFields.password = await bcrypt.hash(
@@ -114,13 +114,22 @@ async function update(req, res) {
       new: true,
     });
 
-    const user = updatedUsers.toObject();
-    delete user.password;
+    const userResponse = {
+      name: updatedUsers.name,
+      email: updatedUsers.email,
+      role: updatedUsers.role,
+      gender: updatedUsers.gender,
+      profilePic:
+      updatedUsers.profilePic &&
+        (isUrl(updatedUsers.profilePic)
+          ? updatedUsers.profilePic
+          : generateFullServerUrl(req, updatedUsers.profilePic)),
+    };
 
     res.status(200).json({
       success: true,
       message: "Users updated successfully.",
-      user,
+      user: userResponse,
     });
   } catch (error) {
     res.status(400).json({

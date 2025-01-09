@@ -57,8 +57,9 @@ export const validateCreate = () => [
 
 export const validateUpdate = (id) => [
   verifyUser,
-  requiredFieldValidation("name", 3),
-  requiredFieldValidation("email")
+  body("name").optional().isLength({ min: 3 }),
+  body("email")
+    .optional()
     .isEmail()
     .withMessage("Invalid email address format")
     .bail()
