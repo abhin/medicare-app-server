@@ -161,6 +161,7 @@ async function deleteUser(req, res) {
 
 async function activate(req, res) {
   const _id = req.accessKeyValue;
+  const redirectToClient = req.params?.doRedirect || 'true';
 
   try {
     if (!_id) throw new Error("Users ID not found.");
@@ -175,10 +176,14 @@ async function activate(req, res) {
       throw new Error("Activation failed. Invalid URL.");
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Account activated successfully.",
-    });
+    if (redirectToClient == 'true') {
+      res.redirect(`${process.env.CLIENT_HOST_URL}/login?userActivated=true`);
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "Account activated successfully.",
+      });
+    }
   } catch (error) {
     res.status(400).json({
       success: false,

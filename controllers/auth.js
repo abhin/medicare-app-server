@@ -38,6 +38,8 @@ async function login(req, res) {
       token: generateAccessToken({accessKey: user._id}),
       name: user.name,
       email: user.email,
+      role: user.email,
+      gender: user.gender,
       profilePic:
         user.profilePic &&
         (isUrl(user.profilePic)
