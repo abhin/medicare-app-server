@@ -34,18 +34,13 @@ async function login(req, res) {
       });
     }
 
-    const userResponse = {
-      token: generateAccessToken({accessKey: user._id}),
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      gender: user.gender,
-      profilePic:
-        user.profilePic &&
-        (isUrl(user.profilePic)
-          ? user.profilePic
-          : generateFullServerUrl(req, user.profilePic)),
-    };
+    const token = generateAccessToken({ accessKey: user._id });
+    const { password: _, ...userResponse } = user.toObject();
+    userResponse.token = token;
+    userResponse.profilePic =
+      user.profilePic && 
+      (isUrl(user.profilePic) ? user.profilePic : generateFullServerUrl(req, user.profilePic));
+
 
     res.status(200).json({
       success: true,

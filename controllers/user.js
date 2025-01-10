@@ -114,17 +114,11 @@ async function update(req, res) {
       new: true,
     });
 
-    const userResponse = {
-      name: updatedUsers.name,
-      email: updatedUsers.email,
-      role: updatedUsers.role,
-      gender: updatedUsers.gender,
-      profilePic:
-      updatedUsers.profilePic &&
-        (isUrl(updatedUsers.profilePic)
-          ? updatedUsers.profilePic
-          : generateFullServerUrl(req, updatedUsers.profilePic)),
-    };
+    const { password: _, ...userResponse } = updatedUsers.toObject();
+    userResponse.profilePic =
+      user.profilePic && 
+      (isUrl(updatedUsers.profilePic) ? updatedUsers.profilePic : generateFullServerUrl(req, updatedUsers.profilePic));
+
 
     res.status(200).json({
       success: true,
