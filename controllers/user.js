@@ -45,6 +45,46 @@ async function create(req, res) {
   }
 }
 
+async function update(req, res) {
+  let userData = req.body;
+  const {password } = userData;
+  const id = req.accessKeyValue;
+
+  try {
+    if (!id) throw new Error("Users ID not found.");
+
+    if (password) {
+      userData.password = await bcrypt.hash(
+        password,
+        parseInt(process.env.SALT_ROUNDS)
+      );
+    }
+
+    const updatedUsers = await Users.findByIdAndUpdate(id, userData, {
+      new: true,
+    });
+
+    const { password: _, ...userResponse } = updatedUsers.toObject();
+    userResponse.profilePic =
+      updatedUsers.profilePic &&
+      (isUrl(updatedUsers.profilePic)
+        ? updatedUsers.profilePic
+        : generateFullServerUrl(req, updatedUsers.profilePic));
+
+    res.status(200).json({
+      success: true,
+      message: "Users updated successfully.",
+      user: userResponse,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Error during user update.",
+      error: error.message,
+    });
+  }
+}
+
 async function getAllUsers(req, res) {
   try {
     const users = await Users.find().select("-password");
@@ -82,46 +122,6 @@ async function getUser(req, res) {
     res.status(500).json({
       success: false,
       message: "Error occurred while fetching user.",
-      error: error.message,
-    });
-  }
-}
-
-async function update(req, res) {
-  let userData = req.body;
-  const {password } = userData;
-  const id = req.accessKeyValue;
-
-  try {
-    if (!id) throw new Error("Users ID not found.");
-
-    if (password) {
-      userData.password = await bcrypt.hash(
-        password,
-        parseInt(process.env.SALT_ROUNDS)
-      );
-    }
-
-    const updatedUsers = await Users.findByIdAndUpdate(id, userData, {
-      new: true,
-    });
-
-    const { password: _, ...userResponse } = updatedUsers.toObject();
-    userResponse.profilePic =
-      updatedUsers.profilePic &&
-      (isUrl(updatedUsers.profilePic)
-        ? updatedUsers.profilePic
-        : generateFullServerUrl(req, updatedUsers.profilePic));
-
-    res.status(200).json({
-      success: true,
-      message: "Users updated successfully.",
-      user: userResponse,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Error during user update.",
       error: error.message,
     });
   }
