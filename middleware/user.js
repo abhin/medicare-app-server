@@ -55,7 +55,7 @@ export const validateCreate = () => [
   getValidationResult,
 ];
 
-export const validateUpdate = (id) => [
+export const validateUpdate = () => [
   verifyUser,
   body("name").optional().isLength({ min: 3 }),
   body("email")
@@ -67,7 +67,7 @@ export const validateUpdate = (id) => [
     .custom(async (value, { req }) => {
       const existingUser = await Users.findOne({
         email: value,
-        _id: { $ne: id },
+        _id: { $ne: req.accessKeyValue },
       });
       if (existingUser) {
         throw new Error("Email is already in use.");
