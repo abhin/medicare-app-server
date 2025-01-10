@@ -3,7 +3,8 @@ import Users from "../models/users.js";
 import { sendAccountActivationEmail } from "../utils/email.js";
 
 async function create(req, res) {
-  const { name, email, password, status, role, gender, sendEmail } = req.body;
+  let userData = req.body;
+  const {password, sendEmail } = userData;
   const succMsg = sendEmail
     ? "Account created successfully. Please check your email for activation."
     : "Account created successfully.";
@@ -11,26 +12,18 @@ async function create(req, res) {
   let userId;
 
   try {
-    const passwordHash = await bcrypt.hash(
+    userData.password = await bcrypt.hash(
       password,
       parseInt(process.env.SALT_ROUNDS)
     );
 
-    const newUser = new Users({
-      name,
-      email,
-      password: passwordHash,
-      role,
-      status,
-      gender,
-    });
+    const newUser = new Users(userData);
 
     await newUser.save();
 
-    const user = newUser.toObject();
-    delete user.password;
+    const { password: _, ...user } = newUser.toObject();
     userId = user._id;
-
+    
     if (sendEmail && !(await sendAccountActivationEmail(user))) {
       throw new Error(
         "Failed to send activation email. Please contact support."
@@ -95,30 +88,30 @@ async function getUser(req, res) {
 }
 
 async function update(req, res) {
-  const { name, email, password, role, gender, status } = req.body;
+  let userData = req.body;
+  const {password } = userData;
   const id = req.accessKeyValue;
 
   try {
     if (!id) throw new Error("Users ID not found.");
 
-    const updatedFields = { name, email, role, gender, status };
-
     if (password) {
-      updatedFields.password = await bcrypt.hash(
+      userData.password = await bcrypt.hash(
         password,
         parseInt(process.env.SALT_ROUNDS)
       );
     }
 
-    const updatedUsers = await Users.findByIdAndUpdate(id, updatedFields, {
+    const updatedUsers = await Users.findByIdAndUpdate(id, userData, {
       new: true,
     });
 
     const { password: _, ...userResponse } = updatedUsers.toObject();
     userResponse.profilePic =
-      user.profilePic && 
-      (isUrl(updatedUsers.profilePic) ? updatedUsers.profilePic : generateFullServerUrl(req, updatedUsers.profilePic));
-
+      updatedUsers.profilePic &&
+      (isUrl(updatedUsers.profilePic)
+        ? updatedUsers.profilePic
+        : generateFullServerUrl(req, updatedUsers.profilePic));
 
     res.status(200).json({
       success: true,
@@ -164,7 +157,7 @@ async function deleteUser(req, res) {
 
 async function activate(req, res) {
   const _id = req.accessKeyValue;
-  const redirectToClient = req.params?.doRedirect || 'true';
+  const redirectToClient = req.params?.doRedirect || "true";
 
   try {
     if (!_id) throw new Error("Users ID not found.");
@@ -179,7 +172,7 @@ async function activate(req, res) {
       throw new Error("Activation failed. Invalid URL.");
     }
 
-    if (redirectToClient == 'true') {
+    if (redirectToClient == "true") {
       res.redirect(`${process.env.CLIENT_HOST_URL}/login?userActivated=true`);
     } else {
       res.status(200).json({
