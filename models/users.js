@@ -69,7 +69,6 @@ const usersSchema = new mongoose.Schema(
     role: {
       type: Number,
       enum: [USER_ROLE_ADMIN.id, USER_ROLE_PATIENT.id, USER_ROLE_DOCTOR.id],
-      default: USER_ROLE_PATIENT.id,
       required: false,
       index: true,
     },
