@@ -10,7 +10,6 @@ import {
   getAllDepartments,
   update,
   deleteDepartment,
-  activate,
   getDepartment,
 } from "../controllers/department.js";
 

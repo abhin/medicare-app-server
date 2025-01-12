@@ -9,7 +9,7 @@ export async function create(req, res) {
 
     return res.status(201).json({
       success: true,
-      message: succMsg,
+      message: "Department created successfully",
       department,
     });
   } catch (error) {
