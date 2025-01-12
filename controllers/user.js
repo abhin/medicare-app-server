@@ -86,8 +86,9 @@ export async function update(req, res) {
 }
 
 export async function getAllUsers(req, res) {
+  const {query} = req.body;
   try {
-    const users = await Users.find().select("-password");
+    const users = await Users.find(query).populate("department");
     res.status(200).json({
       success: true,
       users,

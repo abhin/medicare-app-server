@@ -4,6 +4,7 @@ import {
   validateUpdate,
   validateDelete,
   validateActivation,
+  validateGetAllUsers,
   validateGetUser,
 } from "../middleware/user.js";
 import {
@@ -18,7 +19,7 @@ import {
 const router = express.Router();
 
 router.post(["/create", "/signup"], validateCreate(), create);
-router.get("/read", getAllUsers);
+router.post("/read", validateGetAllUsers(), getAllUsers);
 router.get("/read/:_id", validateGetUser(), getUser);
 router.put("/update", validateUpdate(), update);
 router.delete("/delete/:_id", validateDelete(), deleteUser);

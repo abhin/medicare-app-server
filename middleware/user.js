@@ -121,8 +121,14 @@ export const validateActivation = () => [
   getValidationResult,
 ];
 
+export const validateGetAllUsers = () => [
+  verifyUser,
+  checkUsersExistence,
+  getValidationResult,
+];
+
 export const validateGetUser = () => [
-  requiredParamValidation("_id").isMongoId().withMessage("Invalid ID."),
+  verifyUser,
   checkUsersExistence,
   getValidationResult,
 ];

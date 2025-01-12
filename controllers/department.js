@@ -52,6 +52,7 @@ export async function getAllDepartments(req, res) {
     res.status(200).json({
       success: true,
       departments,
+      message: "Departments fetched successfully.",
     });
   } catch (error) {
     res.status(500).json({
@@ -66,7 +67,7 @@ export async function getDepartment(req, res) {
   const { _id } = req.body;
 
   try {
-    const department = await Departments.findById(_id).select("-password");
+    const department = await Departments.findById(_id);
 
     if (!department) {
       return res.status(404).json({
