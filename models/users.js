@@ -66,6 +66,11 @@ const usersSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    department: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Departments",
+      index: true,
+    },
     role: {
       type: Number,
       enum: [USER_ROLE_ADMIN.id, USER_ROLE_PATIENT.id, USER_ROLE_DOCTOR.id],

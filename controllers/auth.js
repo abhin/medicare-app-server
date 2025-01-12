@@ -5,7 +5,7 @@ import { sendAccountActivationEmail } from "../utils/email.js";
 import { generateAccessToken } from "../utils/accessToken.js";
 import { generateFullServerUrl } from "../utils/url.js";
 
-async function login(req, res) {
+export async function login(req, res) {
   const { email, password } = req.body;
 
   try {
@@ -56,7 +56,7 @@ async function login(req, res) {
   }
 }
 
-async function googleLoginCallBack(req, res) {
+export async function googleLoginCallBack(req, res) {
   const { name, picture, email, email_verified } = JSON.parse(
     req?.user?.profile?._raw
   );
@@ -90,7 +90,7 @@ async function googleLoginCallBack(req, res) {
   }
 }
 
-function googleUserVerify(req, res) {
+export function googleUserVerify(req, res) {
   const { uId } = req.authUser;
 
   User.findOne({ email: uId })
@@ -114,5 +114,3 @@ function googleUserVerify(req, res) {
       });
     });
 }
-
-export { login, googleLoginCallBack, googleUserVerify };

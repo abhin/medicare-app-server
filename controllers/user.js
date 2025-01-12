@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import Users from "../models/users.js";
 import { sendAccountActivationEmail } from "../utils/email.js";
 
-async function create(req, res) {
+export async function create(req, res) {
   let userData = req.body;
   const {password, sendEmail } = userData;
   const succMsg = sendEmail
@@ -45,7 +45,7 @@ async function create(req, res) {
   }
 }
 
-async function update(req, res) {
+export async function update(req, res) {
   let userData = req.body;
   const {password } = userData;
   const id = req.accessKeyValue;
@@ -85,7 +85,7 @@ async function update(req, res) {
   }
 }
 
-async function getAllUsers(req, res) {
+export async function getAllUsers(req, res) {
   try {
     const users = await Users.find().select("-password");
     res.status(200).json({
@@ -101,7 +101,7 @@ async function getAllUsers(req, res) {
   }
 }
 
-async function getUser(req, res) {
+export async function getUser(req, res) {
   const { _id } = req.params;
 
   try {
@@ -127,7 +127,7 @@ async function getUser(req, res) {
   }
 }
 
-async function deleteUser(req, res) {
+export async function deleteUser(req, res) {
   const { _id } = req.params;
 
   try {
@@ -155,7 +155,7 @@ async function deleteUser(req, res) {
   }
 }
 
-async function activate(req, res) {
+export async function activate(req, res) {
   const _id = req.accessKeyValue;
   const redirectToClient = req.params?.doRedirect || "true";
 
@@ -187,5 +187,3 @@ async function activate(req, res) {
     });
   }
 }
-
-export { create, getAllUsers, update, deleteUser, activate, getUser };
