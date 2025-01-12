@@ -74,7 +74,7 @@ const usersSchema = new mongoose.Schema(
     },
     status: {
       type: Boolean,
-      default: false,
+      default: true,
       index: true,
     },
   },
