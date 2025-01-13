@@ -45,6 +45,7 @@ export const checkDepartmentsExistence = async (req, res, next) => {
 };
 
 export const validateCreate = () => [
+  verifyUser,
   requiredFieldValidation("name", 3),
   checkDepartmentsExistence,
   getValidationResult,
