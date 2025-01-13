@@ -4,7 +4,7 @@ import { sendAccountActivationEmail } from "../utils/email.js";
 
 export async function create(req, res) {
   let userData = req.body;
-  const {password, sendEmail } = userData;
+  const { password, sendEmail } = userData;
   const succMsg = sendEmail
     ? "Account created successfully. Please check your email for activation."
     : "Account created successfully.";
@@ -23,7 +23,7 @@ export async function create(req, res) {
 
     const { password: _, ...user } = newUser.toObject();
     userId = user._id;
-    
+
     if (sendEmail && !(await sendAccountActivationEmail(user))) {
       throw new Error(
         "Failed to send activation email. Please contact support."
@@ -47,7 +47,7 @@ export async function create(req, res) {
 
 export async function update(req, res) {
   let userData = req.body;
-  const {password } = userData;
+  const { password } = userData;
   const id = req.accessKeyValue;
 
   try {
@@ -86,9 +86,16 @@ export async function update(req, res) {
 }
 
 export async function getAllUsers(req, res) {
-  const {query} = req.body;
+  const { isUserDepartNameAggregateSearch, query } = req.body;
   try {
-    const users = await Users.find(query).populate("department");
+    let users = [];
+
+    if (isUserDepartNameAggregateSearch === true){
+      users = await userDepartNameAggregateSearch(query);
+    } else {
+      users = await Users.find(query).populate("department");
+    }
+
     res.status(200).json({
       success: true,
       users,
@@ -186,5 +193,40 @@ export async function activate(req, res) {
       success: false,
       message: error.message,
     });
+  }
+}
+
+async function userDepartNameAggregateSearch(matchConditions) {
+  try {
+    const users = await Users.aggregate([
+      {
+        $lookup: {
+          from: "departments",
+          localField: "department",
+          foreignField: "_id",
+          as: "departmentDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$departmentDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: matchConditions,
+      },
+      {
+        $project: {
+          name: 1,
+          email: 1,
+          role: 1,
+          department: "$departmentDetails.name",
+        },
+      },
+    ]).populate("department");
+    return users;
+  } catch (err) {
+    return err;
   }
 }
