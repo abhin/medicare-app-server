@@ -88,23 +88,27 @@ export async function update(req, res) {
 export async function getAllUsers(req, res) {
   const { isUserDepartNameAggregateSearch, query } = req.body;
   try {
-    let users = [];
+    let result = [];
 
-    if (isUserDepartNameAggregateSearch === true){
-      users = await userDepartNameAggregateSearch(query);
+    if (isUserDepartNameAggregateSearch === true) {
+      result = await userDepartNameAggregateSearch(query);
     } else {
-      users = await Users.find(query).populate("department");
+      result = await Users.find(query).populate("department");
+    }
+
+    if (result?.ok == 0) {
+      throw new Error();
     }
 
     res.status(200).json({
       success: true,
-      users,
+      users: result,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Error occurred while fetching users.",
-      error: error.message,
+      error: true,
     });
   }
 }
@@ -218,13 +222,11 @@ async function userDepartNameAggregateSearch(matchConditions) {
       },
       {
         $project: {
-          name: 1,
-          email: 1,
-          role: 1,
-          department: "$departmentDetails.name",
+          password: 0,
         },
       },
-    ]).populate("department");
+    ]);
+
     return users;
   } catch (err) {
     return err;
