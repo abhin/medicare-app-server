@@ -6,7 +6,7 @@ const CONNECTED = "connected";
 const DISCONNECTED = "disconnect"
 
 const iOClient = new Server(httpServer, {
-  cors: { origin: "*" }, //process.env.CLIENT_HOST_URL
+  cors: { origin: process.env.CLIENT_HOST_URL },
 });
 
 iOClient.on(CONNECTION, (socket) => {
