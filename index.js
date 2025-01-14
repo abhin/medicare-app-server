@@ -1,10 +1,10 @@
-import server from "./server.js";
+import httpSocketIOServer from "./httpSocketIOServer.js";
 import db from "./db.js";
 
 const PORT = process.env.PORT || 8080;
 
 db.then(() => {
-  server.listen(PORT, () => {
+  httpSocketIOServer.listen(PORT, () => {
     console.log(
       `DB connection is success. Server is listening on port: ${PORT}`
     );
