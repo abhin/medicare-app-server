@@ -24,8 +24,9 @@ const chatSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["text", "image", "video", "audio", "file"],
+      default: "text",
     },
-    content: {
+    message: {
       type: String,
       required: true,
     },
