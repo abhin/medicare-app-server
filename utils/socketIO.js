@@ -33,7 +33,7 @@ export const recivedJoinedToRoom = ({iOClient, socket, payload}) => {
   // });
 };
 
-export const handleNewMessage = ({iOClient, socket, payload}) => {
+export const handleSendNewChatMessage = ({iOClient, socket, payload}) => {
   const { sender, receiver, roomId, message, date } = payload;
   console.log(SEND_NEW_MESSAGE, sender, receiver, roomId, message, date);
   iOClient.to(roomId).emit(NEW_MESSAGE_RECEIVED, {
