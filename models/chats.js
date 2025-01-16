@@ -4,13 +4,13 @@ const chatSchema = new mongoose.Schema(
   {
     receiver: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Users",
       required: true,
       index: true,
     },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Users",
       required: true,
       index: true,
     },
