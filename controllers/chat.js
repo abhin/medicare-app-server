@@ -2,7 +2,6 @@ import Chats from "../models/chats.js";
 
 export async function create(payload) {
   let chatData = payload;
-
   try {
     const chat = new Chats(chatData);
     await chat.save();

@@ -33,11 +33,16 @@ export const handleSendNewChatMessage = async ({
   socket,
   payload,
 }) => {
-  const { sender, receiver, roomId, message, date, messageType, uniqueId } = payload;
+  const { sender, receiver, roomId, message, date, messageType, uniqueId } =
+    payload;
   const result = await create({
-    body: { sender, receiver, roomId, message, date, messageType },
+    sender,
+    receiver,
+    roomId,
+    message,
+    date,
+    messageType,
   });
-console.log('Chat db save', result);
   if (result.success) {
     iOClient.to(roomId).emit(NEW_MESSAGE_RECEIVED, {
       message,
