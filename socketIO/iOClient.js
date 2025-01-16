@@ -19,6 +19,7 @@ const iOClient = new Server(httpServer, {
 
 iOClient.on(CONNECTION, (socket) => {
   const serverData = { iOClient, socket };
+  
   sendCocketConnectionSuccess({ ...serverData });
 
   socket.on(JOINED_TO_ROOM_REQUEST, (payload) =>

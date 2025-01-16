@@ -24,22 +24,16 @@ export const recivedJoinedToRoom = ({iOClient, socket, payload}) => {
     socketId: socket.id,
     roomId,
   });
-
-  // iOClient.to(roomId).emit(NEW_MESSAGE_RECEIVED, {
-  //   success: true,
-  //   message: `<----------- Socket Id: ${socket.id} Sender : ${sender} has joined the chat! ----------->`,
-  //   socketId: socket.id,
-  //   roomId,
-  // });
 };
 
 export const handleSendNewChatMessage = ({iOClient, socket, payload}) => {
   const { sender, receiver, roomId, message, date } = payload;
-  console.log(SEND_NEW_MESSAGE, sender, receiver, roomId, message, date);
   iOClient.to(roomId).emit(NEW_MESSAGE_RECEIVED, {
     message,
     date,
     socketId: socket.id,
+    sender,
+    receiver
   });
 };
 
