@@ -46,12 +46,12 @@ export async function update(req, res) {
 }
 
 export async function getAllChats(req, res) {
-  const { roomId, limit = 50, skip = 0 } = req.query;
+  const { roomId, limit = 50, skip = 0 } = req.body;
   try {
-    const chats = await Chats.find({ roomId })
-      .sort({ createdAt: 1 }) 
-      .skip(Number(skip)) 
-      .limit(Number(limit));
+    const chats = await Chats.find({ roomId });
+      // .sort({ createdAt: 1 }) 
+      // .skip(Number(skip)) 
+      // .limit(Number(limit));
       
     res.status(200).json({
       success: true,
