@@ -1,11 +1,13 @@
 import {
   SOCKET_CONNECTION_SUCCESS,
-  SEND_NEW_MESSAGE,
+  ERROR_SENDING_NEW_MESSAGE,
   NEW_MESSAGE_RECEIVED,
-  REQUEST_JOINED_TO_ROOM_SUCCESS
+  REQUEST_JOINED_TO_ROOM_SUCCESS,
 } from "./chatEventsConfig.js";
 
-export const sendCocketConnectionSuccess = ({iOClient, socket, payload}) => {
+import { create } from "../controllers/chat.js";
+
+export const sendCocketConnectionSuccess = ({ iOClient, socket, payload }) => {
   iOClient.to(socket.id).emit(SOCKET_CONNECTION_SUCCESS, {
     success: true,
     message: `You are connected to the socket server`,
@@ -13,8 +15,8 @@ export const sendCocketConnectionSuccess = ({iOClient, socket, payload}) => {
   });
 };
 
-export const recivedJoinedToRoom = ({iOClient, socket, payload}) => {
-  const {sender, roomId } = payload;
+export const recivedJoinedToRoom = ({ iOClient, socket, payload }) => {
+  const { sender, roomId } = payload;
 
   socket.join(roomId);
   iOClient.to(roomId).emit(REQUEST_JOINED_TO_ROOM_SUCCESS, {
@@ -26,17 +28,34 @@ export const recivedJoinedToRoom = ({iOClient, socket, payload}) => {
   });
 };
 
-export const handleSendNewChatMessage = ({iOClient, socket, payload}) => {
-  const { sender, receiver, roomId, message, date } = payload;
-  iOClient.to(roomId).emit(NEW_MESSAGE_RECEIVED, {
-    message,
-    date,
-    socketId: socket.id,
-    sender,
-    receiver
+export const handleSendNewChatMessage = async ({
+  iOClient,
+  socket,
+  payload,
+}) => {
+  const { sender, receiver, roomId, message, date, messageType, uniqueId } = payload;
+  const result = await create({
+    body: { sender, receiver, roomId, message, date, messageType },
   });
+console.log('Chat db save', result);
+  if (result.success) {
+    iOClient.to(roomId).emit(NEW_MESSAGE_RECEIVED, {
+      message,
+      date,
+      socketId: socket.id,
+      sender,
+      receiver,
+    });
+  } else {
+    iOClient.to(roomId).emit(ERROR_SENDING_NEW_MESSAGE, {
+      uniqueId,
+      ...result,
+      sender,
+      socketId: socket.id,
+    });
+  }
 };
 
-export const handleDisconnect = ({iOClient, socket, payload}) => {
+export const handleDisconnect = ({ iOClient, socket, payload }) => {
   console.log(`${socket.id} disconnected from server`, payload);
 };

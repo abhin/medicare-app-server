@@ -1,29 +1,29 @@
 import Chats from "../models/chats.js";
 
-export async function create(req, res) {
-  let chatData = req.body;
+export async function create(payload) {
+  let chatData = payload;
 
   try {
     const chat = new Chats(chatData);
     await chat.save();
 
-    return res.status(201).json({
+    return {
       success: true,
       message: "Chat created successfully",
       chat,
-    });
+    };
   } catch (error) {
-    res.status(400).json({
+    return {
       success: false,
       message: "Error during chat creation.",
       error: error.message,
-    });
+    };
   }
 }
 
 export async function update(req, res) {
   const chatData = req.body;
-  const {id} = chatData;
+  const { id } = chatData;
 
   try {
     if (!id) throw new Error("Chats ID not found.");
@@ -47,9 +47,12 @@ export async function update(req, res) {
 }
 
 export async function getAllChats(req, res) {
-  const { roomId } = req.body;
+  const { roomId, limit = 50, skip = 0 } = req.query;
   try {
-    const chats = await Chats.find({roomId});
+    const chats = await Chats.find({ roomId })
+      .sort({ createdAt: 1 }) 
+      .skip(Number(skip)) 
+      .limit(Number(limit));
     res.status(200).json({
       success: true,
       chats,
