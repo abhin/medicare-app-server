@@ -52,6 +52,7 @@ export async function getAllChats(req, res) {
       .sort({ createdAt: 1 }) 
       .skip(Number(skip)) 
       .limit(Number(limit));
+      
     res.status(200).json({
       success: true,
       chats,
