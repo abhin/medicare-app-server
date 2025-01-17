@@ -5,7 +5,7 @@ import {
   JOINED_TO_ROOM_REQUEST,
   DISCONNECTED_FROM_SERVER,
   SEND_NEW_MESSAGE,
-} from "../utils/chatEventsConfig.js";
+} from "../configs/chatEvents.js";
 import {
   sendCocketConnectionSuccess,
   recivedJoinedToRoom,

@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import { ROUTE_BASE } from "./utils/config.js";
+import { ROUTE_BASE } from "./configs/serverPath.js";
 import userRouter from "./routers/user.js";
 import authRouter from "./routers/auth.js";
 import departmentRouter from "./routers/department.js"

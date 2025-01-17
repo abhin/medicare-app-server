@@ -2,7 +2,7 @@ import request from "supertest";
 import server from "../server.js";
 import db from "../db.js";
 import Users from "../models/users.js";
-import { ROUTE_BASE } from "../utils/config.js";
+import { ROUTE_BASE } from "../configs/serverPath.js";
 import mongoose from "mongoose";
 import { generateAccessToken } from "../utils/accessToken.js";
 

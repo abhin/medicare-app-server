@@ -1,6 +1,4 @@
-export const VERSION = 'v1';
-export const ROUTE_BASE = `/api/${VERSION}`;
-export const APP_NAME= 'Medicare'
+import {APP_NAME} from "./serverPath.js";
 
 export const EMAIL_SENDER = `${APP_NAME} Support`
 export const EMAIL_SERVICE =  "Gmail"

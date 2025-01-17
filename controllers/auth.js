@@ -11,6 +11,8 @@ export async function login(req, res) {
   try {
     const user = await User.findOne({ email }).populate("department");
 
+    console.log(user);
+
     if (!user) {
       return res.status(401).json({
         success: false,

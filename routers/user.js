@@ -6,6 +6,7 @@ import {
   validateActivation,
   validateGetAllUsers,
   validateGetUser,
+  validateProfilePhotoUpdate,
 } from "../middleware/user.js";
 import {
   create,
@@ -24,5 +25,10 @@ router.get("/read/:_id", validateGetUser(), getUser);
 router.put("/update", validateUpdate(), update);
 router.delete("/delete/:_id", validateDelete(), deleteUser);
 router.get("/activate/:token", validateActivation(), activate);
+router.put(
+  "/update-profile-photo",
+  validateProfilePhotoUpdate(),
+  update
+);
 
 export default router;

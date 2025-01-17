@@ -1,13 +1,10 @@
 import nodemailer from "nodemailer";
 import { generateAccessToken } from "./accessToken.js";
-import { APP_NAME } from "./config.js";
+import { APP_NAME } from "../configs/serverPath.js";
 
 import {
-  EMAIL_SERVICE,
-  EMAIL_HOST,
-  EMAIL_PORT,
   EMAIL_SENDER,
-} from "./config.js";
+} from "../configs/email.js";
 
 export async function sendEmail({
   to,

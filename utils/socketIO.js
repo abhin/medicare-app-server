@@ -3,7 +3,7 @@ import {
   ERROR_SENDING_NEW_MESSAGE,
   NEW_MESSAGE_RECEIVED,
   REQUEST_JOINED_TO_ROOM_SUCCESS,
-} from "./chatEventsConfig.js";
+} from "../configs/chatEvents.js";
 
 import { create } from "../controllers/chat.js";
 

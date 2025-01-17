@@ -6,6 +6,7 @@ import {
   requiredParamValidation,
   getValidationResult,
 } from "../utils/validator.js";
+import {awsUpload} from "../utils/fileUpload.js";
 
 export const checkUsersExistence = async (req, res, next) => {
   const { _id } = req.params;
@@ -130,5 +131,37 @@ export const validateGetAllUsers = () => [
 export const validateGetUser = () => [
   verifyUser,
   checkUsersExistence,
+  getValidationResult,
+];
+
+export const validateProfilePhotoUpdate = () => [
+  verifyUser,
+  async (req, res, next) => {
+    console.log('req.body', req.body);
+  },
+  awsUpload.single("profilePhotos"),
+  async (req, res, next) => {
+    try {
+      const picUrl = req?.file?.location || req?.file?.path;
+  
+      if (!picUrl) {
+        return res.status(400).json({
+          success: false,
+          message: "Error! Couldn't upload the profile picture.",
+          error: true
+        });
+      }
+  
+      req.body.profilePic = picUrl;
+  
+      next();
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Error during file uploads.",
+        error: error.message,
+      });
+    }
+  },  
   getValidationResult,
 ];

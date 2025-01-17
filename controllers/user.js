@@ -62,7 +62,7 @@ export async function update(req, res) {
 
     const updatedUsers = await Users.findByIdAndUpdate(id, userData, {
       new: true,
-    });
+    }).populate("department");;
 
     const { password: _, ...userResponse } = updatedUsers.toObject();
     userResponse.profilePic =
