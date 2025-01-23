@@ -65,11 +65,6 @@ export async function update(req, res) {
     }).populate("department");;
 
     const { password: _, ...userResponse } = updatedUsers.toObject();
-    userResponse.profilePic =
-      updatedUsers.profilePic &&
-      (isUrl(updatedUsers.profilePic)
-        ? updatedUsers.profilePic
-        : generateFullServerUrl(req, updatedUsers.profilePic));
 
     res.status(200).json({
       success: true,

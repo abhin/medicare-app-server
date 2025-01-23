@@ -5,7 +5,7 @@ import { getValidationResult, requiredFieldValidation } from "../utils/validator
 
 export const verifyUser = (req, res, next) => {
   const token = req.headers.authorization || req.params.token;
-
+  
   try {
     const result = verifyAccessToken(token);
     const { success, message, statusCode, decoded } = result;

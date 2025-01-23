@@ -136,10 +136,7 @@ export const validateGetUser = () => [
 
 export const validateProfilePhotoUpdate = () => [
   verifyUser,
-  async (req, res, next) => {
-    console.log('req.body', req.body);
-  },
-  awsUpload.single("profilePhotos"),
+  awsUpload.single("profile_photo"),
   async (req, res, next) => {
     try {
       const picUrl = req?.file?.location || req?.file?.path;

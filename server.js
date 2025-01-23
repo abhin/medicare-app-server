@@ -7,6 +7,7 @@ import userRouter from "./routers/user.js";
 import authRouter from "./routers/auth.js";
 import departmentRouter from "./routers/department.js"
 import chatRouter from "./routers/chat.js"
+import appointmentRouter from "./routers/appointment.js"
 
 dotenv.config();
 const server = express();
@@ -16,6 +17,7 @@ server.use(`${ROUTE_BASE}/user`, userRouter);
 server.use(`${ROUTE_BASE}/auth`, authRouter);
 server.use(`${ROUTE_BASE}/department`, departmentRouter);
 server.use(`${ROUTE_BASE}/chat`, chatRouter);
+server.use(`${ROUTE_BASE}/appointment`, appointmentRouter);
 
 server.get([`${ROUTE_BASE}/healthcheck`, `${ROUTE_BASE}/check`], (req, res) => {
   res.status(200).json({

@@ -3,8 +3,8 @@ import {
   USER_ROLE_ADMIN,
   USER_ROLE_PATIENT,
   USER_ROLE_DOCTOR,
-} from "./userRoles.js";
-import { FEMALE, MALE, OTHERS } from "./genders.js";
+} from "../configs/userRoles.js";
+import { FEMALE, MALE, OTHERS } from "../configs/genders.js";
 
 const usersSchema = new mongoose.Schema(
   {

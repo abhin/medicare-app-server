@@ -1,7 +1,7 @@
 import multer from "multer";
 import fs from "fs";
 import path from "path";
-import awsStorage from "../configs/awsS3.js"
+import awsStorage from "../configs/awsS3.js";
 
 const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -12,7 +12,6 @@ const diskStorage = multer.diskStorage({
     cb(null, uploadFolder);
   },
   filename: (req, file, cb) => {
-    console.log("file", file);
     cb(null, req?.authUser?.uId + path.extname(file.originalname));
   },
 });

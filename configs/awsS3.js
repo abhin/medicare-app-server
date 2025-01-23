@@ -1,6 +1,7 @@
 import multerS3 from "multer-s3";
 import awsSDK from "aws-sdk";
 import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config();
 
@@ -17,7 +18,12 @@ const awsStorage = multerS3({
   bucket: process?.env?.AWS_S3_BUCKET_NAME,
   contentType: multerS3.AUTO_CONTENT_TYPE,
   key: (req, file, cb) => {
-    return cb(null, req.accessKeyValue + path.extname(file.originalname));
+    console.log("awsStorage = multerS3:: file", file);
+    if (file.originalname) {
+      return cb(null, req.accessKeyValue + path.extname(file.originalname));
+    } else {
+      return cb(new Error("File name is missing or invalid"), null);
+    }
   },
 });
 
